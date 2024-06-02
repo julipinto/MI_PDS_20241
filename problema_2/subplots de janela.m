@@ -1,3 +1,13 @@
+% Obter o diretório do arquivo atual
+current_file = mfilename('fullpath');
+[current_dir, ~, ~] = fileparts(current_file);
+
+% Mudar para o diretório do arquivo atual
+cd(current_dir);
+
+% Carregar o arquivo funcoes.m
+source('janelas.m');
+
 % Define the length of the window and the amount of padding
 N = 100;
 padding = 20;
@@ -12,9 +22,9 @@ figure;
 % First subplot
 
 % Generate the rectangular window
-rectangular_window = rectwin(N);
+rect = rectangular_window(N);
 % Add zero-padding to the window
-window_with_padding = [zeros(padding, 1); rectangular_window; zeros(padding, 1)];
+window_with_padding = [zeros(padding, 1); rect; zeros(padding, 1)];
 
 subplot(3, 2, 1); % 3 rows, 2 columns, first subplot
 stem(indices, window_with_padding, 'filled', 'DisplayName', 'Retangular');
