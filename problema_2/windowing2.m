@@ -46,9 +46,9 @@ grid on
 % Parametros do filtro:
 
 % Faixa de passagem do filtro 0 -> X (Hz)
-Fp = 2650;
+Fp = 2700;
 % Frequencia de rejeição do filtro (Hz)
-Fr = 2700;
+Fr = 2710;
 % Largura de transição do filtro
 Lt = Fr - Fp;
 
@@ -170,3 +170,36 @@ grid on
 % Salvar o sinal filtrado
 audiowrite('SinalFiltrado.wav', Y_filt, Fs);
 
+% ==============================================
+% Plotagem do diagrama de tolerâncias
+% ==============================================
+
+% Resposta em frequência do filtro (Hz)
+[Hf, f] = freqz(h, 1, 1024, Fs);
+
+% Plota a função de transferência do filtro em frequência (Rad/s)
+[Ho, omega] = freqz(h, 1, 1024);
+
+figure(6);
+plot(omega, abs(Ho));
+xlabel('Frequência (Rad/s)');
+ylabel('Magnitude');
+title(['Resposta em Frequência do Filtro: ', filtro_tipo]);
+grid on;
+
+% Plotar a resposta em frequência do filtro
+figure(7);
+plot(f, 20*log10(abs(Hf)));
+title('Resposta em Frequência do Filtro');
+xlabel('Frequência (Hz)');
+ylabel('Magnitude (dB)');
+grid on;
+hold on;
+
+% Plotar o diagrama de tolerâncias
+plot([0, Fp], [-3, -3], 'r--'); % Passband edge
+plot([Fr, Fr], [-100, 0], 'g--'); % Stopband edge
+plot([Fp, Fp], [-100, 0], 'g--'); % Passband edge
+plot([Fp Fr], [-40, -40], 'r--'); % Stopband level
+legend('Resposta em Frequência', 'Faixa de Passagem', 'Faixa de Rejeição', 'Location', 'Best');
+hold off;
