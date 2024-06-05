@@ -167,8 +167,9 @@ xlabel('Frequência (Hz)');
 ylabel('Amplitude do sinal');
 grid on
 
+sinalName = strcat('SinalFiltrado-', window_tipo, '.wav');
 % Salvar o sinal filtrado
-audiowrite('SinalFiltrado.wav', Y_filt, Fs);
+audiowrite(sinalName, Y_filt, Fs);
 
 % ==============================================
 % Plotagem do diagrama de tolerâncias
