@@ -65,7 +65,7 @@ Wc = (Wp + Wr) / 2;
 % ==========================================
 % Escolher o tipo da janela:
 % Pode ser
-window_tipo = 'blackman';
+window_tipo = 'kaiser';
 
 switch window_tipo
     case 'rectwin'
