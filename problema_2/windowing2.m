@@ -30,13 +30,13 @@ k = 0:N-1;
 % Quantidade de periodos
 T = N/Fs;
 freq = k/T;
-fft = fftn(Y)/N;
+Y_fft = fft(Y)/N;
 cutOff = ceil(N/2);
-fft = fft(1:cutOff);
+Y_fft = Y_fft(1:cutOff);
 
 % Plotando o sinal do audio no domi­nio da frequencia
 figure(2);
-plot(freq(1:cutOff),abs(fft));
+plot(freq(1:cutOff),abs(Y_fft));
 title('Sinal Ruidoso (FFT)');
 xlabel('Frequência (Hz)');
 ylabel('Amplitude do sinal');
@@ -48,7 +48,7 @@ grid on
 % Faixa de passagem do filtro 0 -> X (Hz)
 Fp = 2700;
 % Frequencia de rejeição do filtro (Hz)
-Fr = 2710;
+Fr = 3100;
 % Largura de transição do filtro
 Lt = Fr - Fp;
 
@@ -56,16 +56,16 @@ Lt = Fr - Fp;
 % Construção do filtro
 
 % Transformando frequencias para discretas
-Wp = 2 * pi * Fp * (1/Fs);
-Wr = 2 * pi * Fr * (1/Fs);
-Wt = 2 * pi * Lt * (1/Fs);
+Wp = 2 * pi * Fp / Fs;
+Wr = 2 * pi * Fr / Fs;
+Wt = 2 * pi * Lt / Fs;
 
 Wc = (Wp + Wr) / 2;
 
 % ==========================================
 % Escolher o tipo da janela:
 % Pode ser
-window_tipo = 'hamming';
+window_tipo = 'blackman';
 
 switch window_tipo
     case 'rectwin'
@@ -84,27 +84,25 @@ end
 
 % Calcular o tamanho da janela
 % M: Tamanho da janela
-M = round(windowConstant / (Wt / 2 * pi));
+M = round(windowConstant / (Wt / (2 * pi)));
 
 % Garantir que M seja ímpar
 if mod(M,2) == 0
   M = M + 1;
 end
 
-n = (-(M-1)/2:(M-1)/2)';
-
 % Definindo a janela a ser utilizada
 switch window_tipo
     case 'rectwin'
         window = rectwin(M);
     case 'hamming'
-        window = hamming(n, M);
+        window = hamming(M);
     case 'hanning'
-        window = hanning(n, M);
+        window = hanning(M);
     case 'blackman'
-        window = blackman(n, M);
+        window = blackman(M);
     case 'kaiser'
-        window = kaiser(n, M, 8.96);
+        window = kaiser(M, 8.96);
     otherwise
         error('Tipo de janela não reconhecida.');
 end
@@ -113,6 +111,7 @@ end
 % Pode ser 'passa-baixa', 'passa-alta' ou 'passa-faixa'
 filtro_tipo = 'passa-baixa';
 
+n = (-(M-1)/2:(M-1)/2)';
 switch filtro_tipo
     case 'passa-baixa'
         h = sin(Wc * n) ./ (pi * n);
@@ -130,11 +129,32 @@ switch filtro_tipo
         error('Tipo de filtro não reconhecido.');
 end
 
+figure(3);
+plot(window);
+title('Janela');
+xlabel('Amostras');
+ylabel('Magnitude');
+grid on;
+
+% Calculando e plotando o espectro da janela
+N_window = 1024; % Número de pontos para FFT
+window_fft = fft(window, N_window);
+window_fft = window_fft(1:N_window/2+1);
+freq_window = linspace(0, pi, N_window/2+1);
+window_fft_db = 20*log10(abs(window_fft) / max(abs(window_fft)));
+
+figure(4);
+plot(freq_window/pi, window_fft_db);
+title('Espectro da Janela');
+xlabel('\omega / \pi');
+ylabel('Magnitude (dB)');
+grid on;
+
 % Aplicar o janelamento
 h = h .* window;
 
 % Plota a função de transferência do filtro escolhido
-figure(3);
+figure(5);
 plot(n, h);
 xlabel('Amostra');
 ylabel('Amplitude');
@@ -149,7 +169,7 @@ h = h / sum(h);
 Y_filt = conv(Y, h, 'same');
 
 % Plotar o sinal filtrado no domínio do tempo
-figure(4);
+figure(6);
 plot(t, Y_filt);
 title('Sinal Filtrado');
 xlabel('Tempo (s)');
@@ -160,7 +180,7 @@ grid on
 X_filt = fftn(Y_filt) / N;
 X_filt = X_filt(1:cutOff);
 
-figure(5);
+figure(7);
 plot(freq(1:cutOff), abs(X_filt));
 title('Sinal Filtrado (FFT)');
 xlabel('Frequência (Hz)');
@@ -181,7 +201,7 @@ audiowrite(sinalName, Y_filt, Fs);
 % Plota a função de transferência do filtro em frequência (Rad/s)
 [Ho, omega] = freqz(h, 1, 1024);
 
-figure(6);
+figure(8);
 plot(omega, abs(Ho));
 xlabel('Frequência (Rad/s)');
 ylabel('Magnitude');
@@ -189,7 +209,7 @@ title(['Resposta em Frequência do Filtro: ', filtro_tipo]);
 grid on;
 
 % Plotar a resposta em frequência do filtro
-figure(7);
+figure(9);
 plot(f, 20*log10(abs(Hf)));
 title('Resposta em Frequência do Filtro');
 xlabel('Frequência (Hz)');
