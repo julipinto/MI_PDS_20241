@@ -1,3 +1,4 @@
+M=0;
 function w = rectwin(M)
     w = ones(M, 1);
 end

@@ -1,6 +1,8 @@
 close all;
 clc;
 
+source("windows.m");
+
 % Fazendo a importação do audio
 % Y: Amplitudes de cada amostra de audio
 % Fs: Frequencia de amostragem do audio
@@ -65,7 +67,7 @@ Wc = (Wp + Wr) / 2;
 % ==========================================
 % Escolher o tipo da janela:
 % Pode ser
-window_tipo = 'kaiser';
+window_tipo = 'blackman';
 
 switch window_tipo
     case 'rectwin'
