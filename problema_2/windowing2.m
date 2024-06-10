@@ -1,6 +1,8 @@
 close all;
 clc;
 
+source("windows.m");
+
 % Fazendo a importação do audio
 % Y: Amplitudes de cada amostra de audio
 % Fs: Frequencia de amostragem do audio
