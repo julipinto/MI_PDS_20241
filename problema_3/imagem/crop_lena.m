@@ -41,7 +41,7 @@ rectangle('Position', bbox, 'EdgeColor', 'r', 'LineWidth', 2);
 hold off;
 
 % Corrigir o erro de criar a máscara
-size(gray_img)
+s = size(gray_img)
 l = length(gray_img);
 img_width = l;
 img_height = l;
