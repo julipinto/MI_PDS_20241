@@ -1,13 +1,15 @@
+% Carregar pacotes
 pkg load signal;
 pkg load audio;
 
-% Carregar arquivo de áudio
+% Ler arquivo de áudio de entrada
 [y, fs] = audioread('voz_original.wav');
 
 % Calcular o vetor de tempo para o áudio original
 t = (0:length(y)-1) / fs;
 
 % ------------- Visualização do sinal original -------------
+% Plotar o sinal do audio original no tempo
 figure;
 subplot(2,1,1);
 plot(t, y);
@@ -15,7 +17,7 @@ title('Sinal Original no Domínio do Tempo');
 xlabel('Tempo (s)');
 ylabel('Amplitude');
 
-% Calcular e plotar apenas a primeira metade do espectro de frequência
+% Calcular e plotar o espectro de frequência do audio original
 Y = fft(y);
 f = (0:length(Y)/2-1) * fs / length(Y);
 subplot(2,1,2);
@@ -24,8 +26,14 @@ title('Sinal Original no Domínio da Frequência');
 xlabel('Frequência (Hz)');
 ylabel('Magnitude');
 
+figure;
+plot(f, abs(Y(1:length(Y)/2)));
+title('Sinal Original no Domínio da Frequência');
+xlabel('Frequência (Hz)');
+ylabel('Magnitude');
 
-% ------------- Definição de parâmetros -------------
+
+% --------------- Definição de parâmetros ----------------
 frame_size = 1024; % Tamanho da janela
 hop_size = frame_size / 4; % Tamanho do salto entre janelas
 pitch_factor = 1.5; % Fator de mudança de pitch
@@ -48,10 +56,10 @@ for i = 0:num_frames-1
     start_idx = i * hop_size + 1;
     end_idx = start_idx + frame_size - 1;
 
-    % Extrair a janela
+    % Fazer o janelamento do frame
     frame = y(start_idx:end_idx) .* window;
 
-    % Aplicar a FFT
+    % Aplicar a FFT para obter o espectro
     spectrum = fft(frame);
 
     % Manipular as frequências (mudança de pitch)
@@ -78,6 +86,7 @@ output = output / max(abs(output));
 t_mod = (0:length(output)-1) / fs;
 
 % ------------- Visualização do sinal modificado -------------
+% Plotar o sinal do audio de saida no tempo
 figure;
 subplot(2,1,1);
 plot(t_mod, output);
@@ -85,10 +94,16 @@ title('Sinal Modificado no Domínio do Tempo');
 xlabel('Tempo (s)');
 ylabel('Amplitude');
 
-% Calcular e plotar apenas a primeira metade do espectro de frequência
+% Calcular e plotar o espectro de frequência do audio de saida
 Y_mod = fft(output);
 f_mod = (0:length(Y_mod)/2-1) * fs / length(Y_mod);
 subplot(2,1,2);
+plot(f_mod, abs(Y_mod(1:length(Y_mod)/2)));
+title('Sinal Modificado no Domínio da Frequência');
+xlabel('Frequência (Hz)');
+ylabel('Magnitude');
+
+figure;
 plot(f_mod, abs(Y_mod(1:length(Y_mod)/2)));
 title('Sinal Modificado no Domínio da Frequência');
 xlabel('Frequência (Hz)');
