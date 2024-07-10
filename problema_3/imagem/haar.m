@@ -26,11 +26,8 @@ rectangle('Position', [x, y, width, height], 'EdgeColor', 'r','LineWidth', 2);
 hold off;
 title('Rosto detectado');
 
-% ============================================================================
-
 % Passo 2: Aplicar o efeito de troca de pixels (pixelização) na área do rosto
 block_size = 10; % Tamanho do bloco para pixelização
-
 
 blurredImg = image_inputed;
 
@@ -58,7 +55,7 @@ for channel = 1:3
     end
 end
 
-% Exibir a imagem original e a imagem com o rosto pixelizado
+% Exibir a imagem original e a imagem com o rosto pixelado
 figure;
 subplot(1, 2, 1); imshow(image_inputed);
 title('Imagem original');

@@ -56,7 +56,7 @@ for i = 0:num_frames-1
     start_idx = i * hop_size + 1;
     end_idx = start_idx + frame_size - 1;
 
-    % Fazer o janelamento do frame
+    % Fazer o janelamento de cada frame
     frame = y(start_idx:end_idx) .* window;
 
     % Aplicar a FFT para obter o espectro
@@ -65,6 +65,7 @@ for i = 0:num_frames-1
     % Manipular as frequências (mudança de pitch)
     new_spectrum = zeros(size(spectrum));
     len = length(spectrum);
+
     for k = 1:len
         new_k = round(k * pitch_factor);
         if new_k <= len

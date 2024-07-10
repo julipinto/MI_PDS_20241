@@ -1,10 +1,14 @@
+% Carregar pacotes
 pkg load signal;
 pkg load audio;
 
-% Carregar arquivo de áudio
+% Ler arquivo de áudio de entrada
 [y, fs] = audioread('voz_original.wav');
 
-% Definir parâmetros
+% Calcular o vetor de tempo para o áudio original
+t = (0:length(y)-1) / fs;
+
+% --------------- Definição de parâmetros ----------------
 frame_size = 1024; % Tamanho da janela
 hop_size = frame_size / 4; % Tamanho do salto entre janelas
 pitch_factor = 1.5; % Fator de mudança de pitch
@@ -12,14 +16,14 @@ pitch_factor = 1.5; % Fator de mudança de pitch
 % Normalizar o sinal de áudio
 y = y / max(abs(y));
 
-% Número de frames
+% Calcula o número de frames (janelas) que serão processados.
 num_frames = floor((length(y) - frame_size) / hop_size) + 1;
 
 % Inicializar o sinal de saída
 output_length = num_frames * hop_size + frame_size;
 output = zeros(output_length, 1);
 
-% Janelas de Hanning
+% Cria uma janela de Hanning para suavizar as bordas de cada frame
 window = hanning(frame_size);
 
 for i = 0:num_frames-1
@@ -27,10 +31,10 @@ for i = 0:num_frames-1
     start_idx = i * hop_size + 1;
     end_idx = start_idx + frame_size - 1;
 
-    % Extrair a janela
+    % Fazer o janelamento do frame
     frame = y(start_idx:end_idx) .* window;
 
-    % Aplicar a FFT
+    % Aplicar a FFT para obter o espectro
     spectrum = fft(frame);
 
     % Manipular as frequências (mudança de pitch)
@@ -52,6 +56,9 @@ end
 
 % Normalizar o sinal de saída
 output = output / max(abs(output));
+
+% Calcular o vetor de tempo para o áudio modificado
+t_mod = (0:length(output)-1) / fs;
 
 % Salvar o arquivo modificado
 audiowrite('voz_modificada_manual.wav', output, fs);

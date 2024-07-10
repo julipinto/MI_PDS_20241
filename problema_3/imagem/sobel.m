@@ -33,7 +33,7 @@ areas = cellfun(@(x) polyarea(x(:, 2), x(:, 1)), B);
 num_contours = min(6, length(B));
 largest_contours = B(idx(1:num_contours));
 
-% Exibir cada contorno em subplots diferentes e imprimir coordenadas iniciais e finais
+% Exibir cada contorno em subplots diferentes e imprimir coordenadas
 figure;
 for k = 1:num_contours
     subplot(2, 3, k); % Ajuste para uma grade de 2x3
@@ -44,7 +44,7 @@ for k = 1:num_contours
     hold off;
     title(sprintf('Contorno %d', k));
 
-    % Imprimir as coordenadas iniciais e finais do contorno
+    % Imprimir as coordenadas do contorno
     printf('Contorno %d: \n', k);
     printf('Coordenadas - X: %d, Y: %d\n', boundary(1, 2), boundary(1, 1));
 end
